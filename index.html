@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3302: TRANSMISSION</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #00ff66;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 2rem;
+      font-size: 1.2rem;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .glitch {
+      position: relative;
+      display: inline-block;
+      animation: flicker 2s infinite;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .glitch::before {
+      top: -1px;
+      color: #ff00c8;
+      animation: glitchTop 1s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      top: 1px;
+      color: #00ffff;
+      animation: glitchBottom 1.5s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitchTop {
+      0% { clip: rect(0, 9999px, 0, 0); }
+      10% { clip: rect(0, 9999px, 5px, 0); }
+      30% { clip: rect(2px, 9999px, 8px, 0); }
+      50% { clip: rect(1px, 9999px, 6px, 0); }
+      70% { clip: rect(3px, 9999px, 9px, 0); }
+      100% { clip: rect(0, 9999px, 0, 0); }
+    }
+
+    @keyframes glitchBottom {
+      0% { clip: rect(0, 9999px, 0, 0); }
+      20% { clip: rect(2px, 9999px, 8px, 0); }
+      40% { clip: rect(0, 9999px, 4px, 0); }
+      60% { clip: rect(1px, 9999px, 7px, 0); }
+      80% { clip: rect(3px, 9999px, 9px, 0); }
+      100% { clip: rect(0, 9999px, 0, 0); }
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 22%, 24%, 55% {
+        opacity: 0.2;
+      }
+    }
+
+    .typewriter {
+      white-space: pre-wrap;
+      overflow: hidden;
+      border-right: 0.1em solid #00ff66;
+      animation: caret 0.75s step-end infinite;
+    }
+
+    @keyframes caret {
+      from, to { border-color: transparent; }
+      50% { border-color: #00ff66; }
+    }
+
+    #input-line {
+      display: none;
+      margin-top: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.2rem;
+      color: #00ff66;
+    }
+    #prompt {
+      display: inline;
+      user-select: none;
+    }
+    #commandInput {
+      background: black;
+      color: #00ff66;
+      border: none;
+      outline: none;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.2rem;
+      width: calc(100% - 10ch);
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+  <div class="glitch" data-text="> TRANSMISSION ACTIVE...">
+    &gt; TRANSMISSION ACTIVE...
+  </div>
+  <br/><br/>
+  <pre id="output" class="typewriter"></pre>
+  <div id="input-line">
+    <span id="prompt"></span><input type="text" id="commandInput" autocomplete="off" autofocus />
+  </div>
+
+<script>
+  const PASSWORD = 'X7f9P2z';
+
+  const fileSystem = {
+    '/': {
+      type: 'dir',
+      contents: {
+        'secure': { type: 'dir', contents: {
+          'confidential.txt': { type: 'file', content: `You have reached the end of the transmission.
+
+Through shadows and whispers, your mind has persevered.  
+The puzzles, once hidden in the static, now lay unveiled.
+
+This journey closes here, but the echoes of your discovery will linger.  
+Stay vigilant, for every end is but a new beginning.
+
+As a reward for your tenacity, visit the following link to claim what awaits:  
+https://tinyurl.com/cmzm4vjc
+
+Thank you for walking the path of 3302.
+
+End of line.`}
+        }},
+        'logs': {
+          type: 'dir',
+          contents: {
+            'events.log': { type: 'file', content:
+`[2025-06-24 08:59:12] User 'intruder1' LOGIN FAILED from IP 203.0.113.45
+[2025-06-24 09:01:05] User 'intruder2' LOGIN FAILED from IP 198.51.100.22
+[2025-06-24 09:03:34] User 'guest' LOGIN FAILED from IP 192.0.2.13
+[2025-06-24 09:07:21] User 'intruder3' LOGIN FAILED from IP 203.0.113.99
+[2025-06-24 09:12:45] User 'operator_3302' LOGIN SUCCESS from IP 192.168.1.55
+[2025-06-24 09:15:10] User 'intruder4' LOGIN FAILED from IP 10.2.3.14
+[2025-06-24 09:17:52] User 'intruder5' LOGIN FAILED from IP 172.16.0.21
+[2025-06-24 09:19:30] Password attempt: ********
+[2025-06-24 09:20:00] System scan completed
+[2025-06-24 09:22:14] User 'intruder6' LOGIN FAILED from IP 198.51.100.34
+[2025-06-24 09:25:37] User 'intruder7' LOGIN FAILED from IP 203.0.113.67
+`
+            },
+            'keylogger': {
+              type: 'dir',
+              contents: {
+                'keys.txt': { type: 'file', content:
+`[09:00:01] intruder1: help
+[09:00:04] intruder1: dir
+[09:00:07] intruder1: cd logs
+[09:00:11] intruder1: dir
+[09:00:15] intruder1: type events.log
+[09:00:20] intruder1: cd keylogger
+[09:00:25] intruder1: type keys.txt
+[09:00:40] intruder1: cd ..
+[09:00:43] intruder1: cd ..
+[09:00:50] intruder2: help
+[09:00:54] intruder2: dir
+[09:00:58] intruder2: cd secure
+[09:01:00] intruder2: sifuhissfGCG1245
+[09:01:02] intruder2: cd secure
+[09:01:05] intruder2: haslo
+[09:01:07] guest: dir
+[09:01:10] guest: cd secure
+[09:01:12] guest: password123
+[09:01:14] guest: cd secure
+[09:01:15] guest: password
+[09:01:16] guest: 123123321
+[09:03:00] operator_3302: login
+[09:03:05] operator_3302: help
+[09:03:10] operator_3302: dir
+[09:03:15] operator_3302: cd logs
+[09:03:20] operator_3302: dir
+[09:03:25] operator_3302: cd keylogger
+[09:03:30] operator_3302: type keys.txt
+[09:03:40] operator_3302: cd ..
+[09:03:45] operator_3302: cd ..
+[09:03:50] operator_3302: cd secure
+[09:03:52] operator_3302: X7f9P2z
+[09:03:55] operator_3302: type confidential.txt
+[09:00:01] intruder1: help
+[09:00:04] intruder1: dir
+[09:00:07] intruder1: cd logs
+[09:00:11] intruder1: dir
+[09:00:15] intruder1: type events.log
+[09:00:20] intruder1: cd keylogger
+[09:00:25] intruder1: type keys.txt
+[09:00:40] intruder1: cd ..
+[09:00:43] intruder1: cd ..
+[09:00:50] intruder2: help
+[09:00:54] intruder2: dir
+[09:00:58] intruder2: cd secure
+[09:01:00] intruder2: sifuhissfGCG1245
+[09:01:02] intruder2: cd secure
+[09:01:05] intruder2: haslo
+[09:01:18] intruder3: help
+[09:01:22] intruder3: cd logs
+[09:01:26] intruder3: dir
+[09:01:30] intruder3: type events.log
+[09:01:35] intruder3: cd keylogger
+[09:01:40] intruder3: type keys.txt
+[09:01:50] intruder4: dir
+[09:01:55] intruder4: cd secure
+[09:01:57] intruder4: tryme
+[09:02:00] intruder4: cd secure
+[09:02:02] intruder4: uigbnose945gb
+[09:02:05] intruder5: help
+[09:02:10] intruder5: cd logs
+[09:02:15] intruder5: type events.log
+[09:02:20] intruder5: cd keylogger
+[09:02:25] intruder5: type keys.txt
+[09:02:30] hackerX: help
+[09:02:35] hackerX: dir
+[09:02:40] hackerX: cd secure
+[09:02:42] hackerX: guessme
+[09:02:45] hackerX: cd secure
+[09:02:42] hackerX: PaSsWoRd
+[09:02:50] randomUser: cd secure
+[09:02:52] randomUser: 79uhbgseg04
+[09:02:54] randomUser: cd secure
+[09:02:56] randomUser: 25636FGAWFwfa3
+`
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  let currentPath = '/';
+  let secureUnlocked = false;
+  let awaitingPassword = false;
+  let typingConfidential = false;
+
+  function getDirectory(path) {
+    if(path === '/') return fileSystem['/'];
+    const parts = path.split('/').filter(Boolean);
+    let current = fileSystem['/'];
+    for (const part of parts) {
+      if (current.contents && current.contents[part] && current.contents[part].type === 'dir') {
+        current = current.contents[part];
+      } else {
+        return null;
+      }
+    }
+    return current;
+  }
+
+  function getFile(path) {
+    const parts = path.split('/').filter(Boolean);
+    let current = fileSystem['/'];
+    for(let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if(i === parts.length - 1) {
+        // last part - file
+        if(current.contents && current.contents[part] && current.contents[part].type === 'file') {
+          return current.contents[part];
+        } else {
+          return null;
+        }
+      } else {
+        if(current.contents && current.contents[part] && current.contents[part].type === 'dir') {
+          current = current.contents[part];
+        } else {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  function listDirectory(path) {
+    const dir = getDirectory(path);
+    if (!dir) return 'Directory not found.';
+    return Object.keys(dir.contents).map(name => {
+      const item = dir.contents[name];
+      return item.type === 'dir' ? name + '\\' : name;
+    }).join('\n');
+  }
+
+  function normalizePath(path) {
+    const parts = path.split('/').filter(Boolean);
+    const stack = [];
+    for (const part of parts) {
+      if (part === '..') {
+        if (stack.length > 0) stack.pop();
+      } else if (part !== '.' && part !== '') {
+        stack.push(part);
+      }
+    }
+    return '/' + stack.join('/');
+  }
+
+  const output = document.getElementById('output');
+  const inputLine = document.getElementById('input-line');
+  const commandInput = document.getElementById('commandInput');
+  const prompt = document.getElementById('prompt');
+  let index = 0;
+
+  const bootText = `SYSTEM LOG // SECTOR: [[ REDACTED ]]
+ACCESS LEVEL: AUTHORIZED
+
+Welcome user.
+
+Node online.  
+Integrity breach detected. Recovery sequence activated.  
+Scanning for corrupted sectors
+..............................................  
+Anomalies detected in sector 7G-42. Initiating containment protocols
+................................................................  
+Containment successful.  
+
+---
+
+Awaiting further input.`;
+
+  function typeNext() {
+    if (index < bootText.length) {
+      output.textContent += bootText.charAt(index);
+      index++;
+      setTimeout(typeNext, 40);
+    } else {
+      inputLine.style.display = 'block';
+      updatePrompt();
+      commandInput.focus();
+    }
+  }
+
+  function updatePrompt() {
+    prompt.textContent = currentPath + '> ';
+  }
+
+  function typeTextAnimated(text, callback) {
+    let i = 0;
+    typingConfidential = true;
+    function nextChar() {
+      if (i < text.length) {
+        output.textContent += text.charAt(i);
+        i++;
+        setTimeout(nextChar, 10);
+      } else {
+        typingConfidential = false;
+        if (callback) callback();
+      }
+    }
+    nextChar();
+  }
+
+  window.addEventListener('load', typeNext);
+
+  commandInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      if(typingConfidential) return; // ignore input while typing animated text
+
+      let input = commandInput.value.trim();
+      if (!input) return;
+
+      let response = '';
+
+      if (awaitingPassword) {
+        if (input === PASSWORD) {
+          secureUnlocked = true;
+          response = 'Access granted. You may now enter /secure.';
+        } else {
+          response = 'Access denied. Incorrect password.';
+        }
+        awaitingPassword = false;
+        output.textContent += `\n${currentPath}> ********\n${response}`;
+        commandInput.value = '';
+        updatePrompt();
+        window.scrollTo(0, document.body.scrollHeight);
+        return;
+      }
+
+      const args = input.split(' ').filter(Boolean);
+      const cmd = args[0].toLowerCase();
+
+      if (cmd === 'help') {
+        response = `Available commands:
+ - help
+ - clear
+ - dir
+ - cd [dir] (use 'cd ..' to go back)
+ - type [filename]`;
+      } else if (cmd === 'clear') {
+        output.textContent = '';
+        commandInput.value = '';
+        return;
+      } else if (cmd === 'dir') {
+        if (currentPath === '/' && !secureUnlocked) {
+          response = ['logs\\', 'secure\\'].join('\n');
+        } else {
+          response = listDirectory(currentPath);
+        }
+      } else if (cmd === 'cd') {
+        if (args.length < 2) {
+          response = 'Specify directory to change to.';
+        } else {
+          let target = args[1];
+          let newPath;
+
+          if (target === '..') {
+            newPath = normalizePath(currentPath + '/..');
+          } else if (target.startsWith('/')) {
+            newPath = normalizePath(target);
+          } else {
+            newPath = normalizePath(currentPath + '/' + target);
+          }
+
+          if (newPath === '/secure' && !secureUnlocked) {
+            awaitingPassword = true;
+            output.textContent += `\n${currentPath}> ${input}\nEnter password:`;
+            commandInput.value = '';
+            updatePrompt();
+            window.scrollTo(0, document.body.scrollHeight);
+            return;
+          }
+
+          const dirExists = getDirectory(newPath);
+          if (dirExists) {
+            currentPath = newPath;
+          } else {
+            response = `Directory not found: ${target}`;
+          }
+        }
+      } else if (cmd === 'type') {
+        if (args.length < 2) {
+          response = 'Specify filename to display.';
+        } else {
+          let fileName = args[1];
+          let filePath;
+          if (fileName.startsWith('/')) {
+            filePath = normalizePath(fileName);
+          } else {
+            filePath = normalizePath(currentPath + '/' + fileName);
+          }
+          const file = getFile(filePath);
+          if (file) {
+            if(filePath === '/secure/confidential.txt') {
+              // animated typing
+              output.textContent += `\n${currentPath}> ${input}\n`;
+              commandInput.value = '';
+              updatePrompt();
+              window.scrollTo(0, document.body.scrollHeight);
+              typeTextAnimated(file.content);
+              return;
+            } else {
+              response = file.content;
+            }
+          } else {
+            response = `File not found: ${fileName}`;
+          }
+        }
+      } else {
+        response = `Unknown command: '${input}'
+Type 'help' for available commands.`;
+      }
+
+      output.textContent += `\n${currentPath}> ${input}`;
+      if (response) output.textContent += `\n${response}`;
+      commandInput.value = '';
+      updatePrompt();
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  });
+</script>
+</body>
+</html>
